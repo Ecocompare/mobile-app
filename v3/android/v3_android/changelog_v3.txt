@@ -1,0 +1,13 @@
+- Statistiques de l'utilisateur + Medailles
+- Historisques des scans 
+- Reglette de recherche tactile
+- Si erreur sur formulaire, on remonte automatiquement la vue sur le message d'erreur
+- Correction de style css sur l'ensemble de l'application
+- Commentaire JSDOC
+- Certain processus qui revenait à chaque page on était ajouté en tant que fonction
+- onResume fonctionne maintenant sur chaque page, test de la connexion réseau
+- Nom prénom autorise maintenant les caractères accentués et les tirets
+- Année de naissance n'autorise que des type numériques
+- Dans la Page détails produit : Si le prix n'existe pas, il n'est pas affiché
+- Lors du scan on verifie maintenant la validité du code barre
+- Android adopte maintenant les medias queries pour les apprareils 320*480

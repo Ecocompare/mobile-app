@@ -1,0 +1,1 @@
+-Fonction timeSpent modifiée pour l'adapter à chrome et safari

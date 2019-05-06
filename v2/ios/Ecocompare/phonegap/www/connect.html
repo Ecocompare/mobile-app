@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+    </head>
+    <body>
+    
+		<!-- TITLEBAR -->
+    	<div class="titleBar">
+    		Connexion
+    	</div>
+		<div class="subTitle"></div>
+		
+		<!-- WAITING LOADER -->
+		<div class="waiting"><img src="img/ajax-loader.gif"/></div>
+		
+		<!-- LOG IN -->
+		<div class="scroll">
+			<div class="box">
+				<div class='box-notif information'>
+				Utilisateur de la version précédente, veuillez cliquer sur Mot de passe oublié afin d'en obtenir un.
+				</div>
+		        <form id='account'>
+		        	<!--<div class='label'>Adresse email</div>-->
+		        	<div><input class='grouped' id='email' placeholder='Adresse email' type="email" required="required" /></div>
+		        	<!--<div class='label'>Mot de passe</div>-->
+		        	<div><input class='grouped' id='pwd' placeholder='Mot de passe' type="password" required="required" /></div>
+		        	<div><input class='btn-large green' type='submit' value='Connexion / Inscription'/></div>
+		        </form>
+		        <div class='btn-large green' onClick="window.location.href='forgot.html'">Mot de passe oublié</div>
+		        <div class='btn-large facebook' onClick='Facebook.init()'>Facebook</div>
+		     
+	        </div>
+        </div>
+        
+        <!-- POPUP SCAN -->
+        <div class='popup'>
+	        <div class='ecocompare' onClick="scan()">Scanner un produit</div>
+	        <div class='ecocompare' onClick='showEanForm()'>Saisir un code EAN</div>
+	        <form id='formEan'>
+        		<input id='ean' type='text' placeholder='Code Ean' />
+        	</form>
+	        <img class='close' src='img/icons/round_minus.png' onClick='showPopup()' /> 
+        </div>
+        
+        <!-- FOOTER -->
+		<div class='footer'>
+			<div class='subnav' onClick='showPopup()'><img class='big' src='img/bt1.png'/></div>
+			<div class='subnav'><img src='img/icons/star.png' onClick="window.location.href='index.html'"/><br><a href='index.html'>Nouveautés</a></div>
+			<div class='subnav'><img src='img/icons/search-light.png' onClick="window.location.href='search.html'" height='34px'/><br><a href='search.html'>Rechercher</a></div>
+			<div class='subnav active'><img src='img/icons/user.png' onClick="window.location.href='account.html'" height='34px'/><br><a href='account.html'>Compte</a></div>
+		</div>
+        <!-- JS SCRIPTS  -->
+        <script type="text/javascript" src="cordova-2.5.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/jquery-1.8.1.js"></script>
+        <script type="text/javascript" src="js/data.js"></script>
+        <script type="text/javascript" src="js/nav.js"></script>
+        <script type="text/javascript" src="js/func.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/barcodescanner.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/facebook.js"></script>
+        <script type="text/javascript">
+     
+    	
+        document.addEventListener("deviceready", onDeviceReady, false);
+        
+        function onDeviceReady() {
+        	checkConnection();
+           	if(isConnected()){
+           		window.location.href='account.html';
+           	}
+           	else{
+           	//Send ean search
+	    		$('#formEan').submit(function(){
+	    		    var checkEan = new RegExp("^[0-9]{13}$","g");
+	    		    var ean = document.getElementById('ean').value;
+	    			if(!checkEan.test(ean)){
+	    				sendAlert('Veuillez entrer un code à 13 chiffres', null, 'Erreur', 'Fermer', null, null);
+	    			}else{
+		    			if(checkDigitEan13(ean)){
+		    				window.location.href='product.html?ean='+ean+'';
+		    			}
+	    				else{
+	    					sendAlert('Le code ne semble pas valide. Veuillez réessayer', null, 'Erreur', 'Fermer', null, null);
+	    				}		
+	    		   }
+		    	   return false;
+		   		});
+	        	$('#account').submit(function(){
+	        		
+	        		//RFC 2822 Email regex
+    	        	var checkMail= new RegExp("^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$","g");
+	    	        var email = document.getElementById('email').value;
+	    	        var pwd = document.getElementById('pwd').value;
+	    	        
+					var errors=[];
+					
+					if(email!=''){
+						if(!checkMail.test(email)){
+							errors.push('Veuillez saisir une adresse email valide');
+						}
+					}else{
+						errors.push('Veuillez remplir le champ email');
+					}
+	    	       	if(pwd!=''){
+	    	       		if(pwd.length<4){
+	    	       			errors.push('Votre mot de passe doit contenir au moins 4 caractères');
+	    	       		}
+	    	       	}else{
+	    	       		errors.push('Veuillez remplir le champ mot de passe');
+	    	       	}
+	    	     
+	    	       	if(errors.length>0){
+	    	       		console.log(errors.length);
+	    	       		$('.box-notif.error').remove();
+	    	       		var txt = '<div class="box-notif error">';
+	    	       		for(var i=0; i<errors.length; i++){
+	    	       			txt += errors[i]+'<br>';
+	    	       		}
+	    	       		txt += '</div>';
+	    	       		$('.box-notif.information').before(txt);
+	    	       		$('.box-notif.information').css('display','none');
+	    	       		
+	    	       	}else{
+	    	        	$.ajax({
+	    	        		url: 'http://ecocompare.com/mobile/checkUser.php',
+	    	        		data:{email: email, pwd: pwd},
+	    	        		contentType:'application/json',
+	    	        		dataType: 'json',
+	    	        		type:'GET',
+	    	        		crossDomain:true,
+	    	        		success: function(data){
+	    	        			if(data.id){
+	    	        				window.location.href='account.html';
+	    	        				window.localStorage.setItem('idUser', data.id);
+	    	        				window.localStorage.setItem('validUser', data.isValid);
+	    	        			}
+	    	        			else{
+	    	        				sendAlert('Le mot de passe associée à cette adresse email n\'est pas valide.', null, 'Information', 'Fermer', null, null);
+	    	        			}
+	    	        		},
+	    	        		error: function(){
+	    	        			console.log('Error');
+	    	        		}
+	    	        	});	
+	    	       	}
+	    	       	return false;
+	    	       	location.reload();
+	    	    });
+           	}
+        }
+        </script>
+    </body>
+</html>

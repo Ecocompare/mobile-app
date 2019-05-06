@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/style-ui.css" />
+        <link rel="stylesheet" type="text/css" href="css/style-slide.css" />
+        <title>Ecocompare</title>
+    </head>
+    
+    <body>
+    
+    	<!-- TITLE BAR -->
+    	<div class="titleBar">
+    		<span class="btn-bar left" onclick="window.history.back()"><span>Retour</span></span>Recherche
+    		<span class="btn-bar right" onclick="showPopup2()">Avancée</span>
+    	</div>
+    	
+    	<!-- WAITING LOADER -->
+    	<div class="waiting"><img src="img/ajax-loader.gif"/><br>Chargement</div>
+    	
+    	<!-- SEARCH FORM -->
+    	<form id='formSearch'>
+    		<input type='search' id='keywords' name='keywords' autocomplete="off" placeholder='Mot clés, Marque...'/>
+        </form>
+        
+        <!-- SEARCH RESULTS -->
+        <div id="scrollerSearch">
+			<div class='list'></div>
+	    </div>
+	    
+	    <!-- POPUP SCAN -->
+	    <div class='popup'>
+	        <div class='ecocompare' onClick="scan()">Scanner un produit</div>
+	        <div class='ecocompare' onClick='showEanForm()'>Saisir un code EAN</div>
+	        <form id='formEan'>
+        		<input id='ean' type='text' placeholder='Code Ean' />
+        	</form>
+	         <img class='close' src='img/icons/round_minus.png' onClick='showPopup()' /> 
+        </div>
+        
+        
+        <!-- SEARCH CRITERIA -->
+        <div class='popup2'>
+	      	<p>Personnalisez votre recherche en utilisant notre réglette</p>     
+        	<div id="slider"></div>
+       		<div class='labelzone'>
+				<div class='labelreglette envcol'>Environnement<span id="env"></span></div>
+				<div class='labelreglette societalcol'>Sociétal<span id="societal"></span></div>
+				<div class='labelreglette santecol'>Santé<span id="sante"></span></div>
+			</div>
+        	<div class='btn-large ecocompare' onClick='getCriteriaSearch()'>Rechercher</div> 
+	        <img class='close' src='img/icons/round_minus.png' onClick='showPopup2()' /> 
+        </div>
+        
+         
+        <!-- FOOTER -->
+	    <div class='footer'>
+			<div class='subnav' onClick='showPopup()'><img class='big' src='img/bt1.png'/></div>
+			<div class='subnav'><img src='img/icons/star.png' onClick="window.location.href='index.html'"/><br><a href='index.html'>Nouveautés</a></div>
+			<div class='subnav active'><img src='img/icons/search-light.png' onClick="window.location.href='search.html'" height='34px'/><br><a href='search.html'>Rechercher</a></div>
+			<div class='subnav'><img src='img/icons/user.png' onClick="window.location.href='account.html'" height='34px'/><br><a href='account.html'>Compte</a></div>
+		</div>
+		
+        <script type="text/javascript" src="js/jquery-1.8.1.js"></script>
+        <script type="text/javascript" src="js/jquery-ui.js"></script>
+        <script type="text/javascript" src="js/touch.js"></script>
+        <script type="text/javascript" src="cordova-2.5.0.js"></script>
+        <script type="text/javascript" src="js/func.js"></script>
+        <script type="text/javascript" src="js/template.js"></script>
+        <script type="text/javascript" src="js/data.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/barcodescanner.js"></script>
+        <script type="text/javascript">
+        
+        document.addEventListener("deviceready", onDeviceReady, false);
+		
+		function onDeviceReady() {
+        	checkConnection();
+        	getSearch();
+ 		   	eanSearch();
+ 		    document.addEventListener("resume", onResume, false);
+			function onResume() {
+				console.log("Resumed");
+				checkConnection();
+			}
+		}
+	
+		$(function() {
+		   	$("#slider").slider({
+		    	range: true,
+			    min: 1,
+			    max: 100,
+			    values: [33, 66],
+			    slide: function(event, ui) {
+
+			        var env = ui.values[0];
+			        var societal = ui.values[1]-ui.values[0];
+			        var sante = 100 - ui.values[1];
+
+			        $("#env").html(env+'%');
+			        $("#societal").html(societal+'%');
+			        $("#sante").html(sante+'%');
+			        
+			        $("#slider").css("background","-moz-linear-gradient(left, #9BCB2A 0%, #9BCB2A "+env+"%, #ff4141 "+ui.values[1]+"%, #ff4141 100%)");
+			        $("#slider").css("background","-webkit-linear-gradient(left, #9BCB2A 0%, #9BCB2A "+env+"%, #ff4141 "+ui.values[1]+"%, #ff4141 100%)");
+			    }
+			});
+			$("#env").html($("#slider").slider("values", 0)+"%");
+			$("#societal").html($("#slider").slider("values", 1)-$("#slider").slider("values", 0)+"%");
+			$("#sante").html(100 - $("#slider").slider("values", 1)+"%");
+	   		$('#slider').draggable();
+	  	});
+        	
+		    
+		</script>
+    </body>
+</html>

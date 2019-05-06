@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <title>Ecocompare</title>
+    </head>
+    
+    <body>
+    
+    	<!-- TITLE BAR -->
+    	<div class="titleBar">
+    		<span class="btn-bar left" onclick="history.back(-1)"><span>Retour</span></span>Recherche
+    		<!--<span class="btn-bar right" onclick="showPopup2()">+</span>-->
+    	</div>
+    	
+    	<!-- WAITING LOADER -->
+    	<div class="waiting"><img src="img/ajax-loader.gif"/><br>Chargement</div>
+    	
+    	<!-- SEARCH FORM -->
+    	<form id='formSearch'>
+    		<input type='search' id='keywords' name='keywords' autocomplete="off" placeholder='Mot clés, Marque...'/>
+        </form>
+        
+        <!-- SEARCH RESULTS -->
+        <div id="scrollerSearch">
+			<div class='list'></div>
+	    </div>
+	    
+	    <!-- POPUP SCAN -->
+	    <div class='popup'>
+	        <div class='ecocompare' onClick="scan()">Scanner un produit</div>
+	        <div class='ecocompare' onClick='showEanForm()'>Saisir un code EAN</div>
+	        <form id='formEan'>
+        		<input id='ean' type='text' placeholder='Code Ean' />
+        	</form>
+	         <img class='close' src='img/icons/round_minus.png' onClick='showPopup()' /> 
+        </div>
+        
+        <!--
+        POPUP PERSONALIZE-SEARCH COME IN V3
+        <div class='popup2'>
+	      	<p>Définissez vous même vos préférences de recherche en 
+				utilisant la reglette ci-dessous</p>     
+        	<div id="slider">
+				<table id="range" width="100%" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class='environnement' width="33%"></td>
+						<td class='societal' width="33%"></td>
+						<td class='sante' width="33%"></td>
+					</tr>
+				</table>	
+			</div>
+		    <p id="text">33% 33% 33%</p>
+        	<div class='btn-large ecocompare'>Lancer la recherche</div> 
+	        <img src='img/icons/round_minus.png' onClick='showPopup2()' /> 
+        </div>
+         -->
+         
+        <!-- FOOTER -->
+	    <div class='footer'>
+			<div class='subnav' onClick='showPopup()'><img class='big' src='img/bt1.png'/></div>
+			<div class='subnav'><img src='img/icons/star.png' onClick="window.location.href='index.html'"/><br><a href='index.html'>Nouveautés</a></div>
+			<div class='subnav active'><img src='img/icons/search-light.png' onClick="window.location.href='search.html'" height='34px'/><br><a href='search.html'>Rechercher</a></div>
+			<div class='subnav'><img src='img/icons/user.png' onClick="window.location.href='account.html'" height='34px'/><br><a href='account.html'>Compte</a></div>
+		</div>
+		
+        <script type="text/javascript" src="js/jquery-1.8.1.js"></script>
+        <script type="text/javascript" src="cordova-2.5.0.js"></script>
+        <script type="text/javascript" src="js/func.js"></script>
+        <script type="text/javascript" src="js/template.js"></script>
+        <script type="text/javascript" src="js/data.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/barcodescanner.js"></script>
+        <script type="text/javascript">
+        document.addEventListener("deviceready", onDeviceReady, false);
+		
+		function onDeviceReady() {
+        	checkConnection();
+		}
+        	if(window.localStorage.getItem('search')){
+				products(JSON.parse(window.localStorage.getItem('search')), 'search');
+	    		document.getElementById('keywords').value = JSON.parse(window.localStorage.getItem('searchValue'));
+	    	}
+        	    
+		    //Try to functionalize this Search flow       	    
+		    $('#formSearch').submit(function(){	
+		    	if(document.getElementById('keywords').value.length >= 4){
+		    		var searchValue = document.getElementById('keywords').value;	
+		    	    var getData = $(this).serialize();
+		    	    $('.list').html('');
+		    	    $(".waiting").css("display", "block");
+		    	    $.ajax({
+		    	    	type: 'GET',
+		    	    	contentType:'application/json',
+		    	    	dataType: 'json',
+		    	    	data: getData,
+		    	    	url: 'http://projets2.idnext.net/ecocompare2/mobile/getSearch.php',
+		    	    	success: function(data){
+		    	    		if(data.length > 0){
+		    	    			window.localStorage.removeItem('search');
+		    	    			products(data, 'search');
+		    	    			window.localStorage.setItem('search',JSON.stringify(data));
+		    	    			window.localStorage.setItem('searchValue', JSON.stringify(searchValue));
+		    	    		}
+		    	    		else
+		    	    		{
+		    	    			$(".waiting").css("display", "none");
+		    	    			sendAlert('Oups! Pas de résultats pour votre recherche.', null, 'Information', 'Fermer', null, null);
+		    	    		}
+		    	    	},
+		    	    	error: function(){
+		    	    		console.error('Error : SEARCH FORM SUBMIT');
+		    	    	}
+		    	    });
+		    	}
+		    	else
+		    	{
+		    		sendAlert('Veuillez entrez au moins 4 caractères!', null, 'Information', 'Fermer', null, null);
+		    	}
+		    	return false;
+		     });
+		        
+		    $('#formEan').submit(function(){
+    		    var checkEan = new RegExp("^[0-9]{13}$","g");
+    		    var ean = document.getElementById('ean').value;
+    			if(!checkEan.test(ean)){
+    				sendAlert('Veuillez entrer un code à 13 chiffres', null, 'Erreur', 'Fermer', null, null);
+    			}else{
+	    			if(checkDigitEan13(ean)){
+	    				window.location.href='product.html?ean='+ean+'';
+	    			}
+    				else{
+    					sendAlert('Le code ne semble pas valide. Veuillez réessayer', null, 'Erreur', 'Fermer', null, null);
+    				}		
+    		   }
+	    	   return false;
+	   		});
+		</script>
+    </body>
+</html>

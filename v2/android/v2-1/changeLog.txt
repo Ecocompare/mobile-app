@@ -1,0 +1,3 @@
+10/06/2013
+-Autorisation des caractères spéciaux sur le formulaire de profil, Nom/Prénom
+-Ajouts commentaires
