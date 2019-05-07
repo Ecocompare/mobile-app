@@ -25,10 +25,7 @@ Data are exchanged trough REST API
 * validatePassword.php
 
 # Screenshots
-<img src="/Screenshots/screen568x568.jpg" width="200"/>
-<img src="/Screenshots/detailproduit.jpg" width="200"/>
-<img src="/Screenshots/inscription.jpg" width="200"/>
-<img src="/Screenshots/detailnote.jpg" width="200"/>
+<img src="/Screenshots/screen568x568.jpg" width="200"/> <img src="/Screenshots/détailproduit.jpg" width="200"/> <img src="/Screenshots/inscription.png" width="200"/> <img src="/Screenshots/detailnote.png" width="200"/>
 <img src="/Screenshots/scan.png" width="200"/>
 
 # Contribute
