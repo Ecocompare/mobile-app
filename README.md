@@ -26,6 +26,10 @@ Data are exchanged trough REST API
 
 # Screenshots
 <img src="/Screenshots/screen568x568.jpg" width="200"/>
+<img src="/Screenshots/detailproduit.jpg" width="200"/>
+<img src="/Screenshots/inscription.jpg" width="200"/>
+<img src="/Screenshots/detailnote.jpg" width="200"/>
+<img src="/Screenshots/scan.png" width="200"/>
 
 # Contribute
 Mobile apps have been removed from Apple and Android stores due to compatibility issues. Code sould be adapted to work again.
