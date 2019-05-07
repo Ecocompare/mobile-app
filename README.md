@@ -25,7 +25,7 @@ Data are exchanged trough REST API
 * validatePassword.php
 
 # Screenshots
-<img src="/Screenshots/screen568x568.jp" width="200"/>
+<img src="/Screenshots/screen568x568.jpg" width="200"/>
 
 # Contribute
 Mobile apps have been removed from Apple and Android stores due to compatibility issues. Code sould be adapted to work again.
