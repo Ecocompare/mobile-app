@@ -1,6 +1,6 @@
 # Ecocompare mobile-app
 The Mobile app allow users to scan barcode or browse product in order to display their environmental, societal ans sanitary summary.
-Available on iPhone and Android devices
+Available on iPhone and Android devices. French only.
 
 # Technology
 The mobile app has been developped with Adobe Phonegap framework. https://phonegap.com/
